@@ -5,28 +5,21 @@ import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import furgl.noFall.config.Config;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 
 public class CommandNoFall extends CommandBase
 {
-	public CommandNoFall()
-	{
-
-	}
-
 	public int getRequiredPermissionLevel()
 	{
 		return 0;
 	}
 
-	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) 
+	public List addTabCompletionOptions(ICommandSender sender, String[] args) 
 	{
 		if (args.length == 1)
 		{
@@ -35,7 +28,7 @@ public class CommandNoFall extends CommandBase
 			list.add("disable");
 			list.add("height");
 			list.add("avoid");
-			return func_175762_a(args, list);
+			return getListOfStringsFromIterableMatchingLastWord(args, list);
 		}
 		else if (args.length == 2)
 		{
@@ -44,7 +37,7 @@ public class CommandNoFall extends CommandBase
 				List list = new ArrayList();
 				list.add("lava");
 				list.add("water");
-				return func_175762_a(args, list);
+				return getListOfStringsFromIterableMatchingLastWord(args, list);
 			}
 		}
 		else if (args.length == 3)
@@ -54,18 +47,18 @@ public class CommandNoFall extends CommandBase
 				List list = new ArrayList();
 				list.add("true");
 				list.add("false");
-				return func_175762_a(args, list);
+				return getListOfStringsFromIterableMatchingLastWord(args, list);
 			}
 		}
 		return null;
 	}
 
-	public boolean canCommandSenderUse(ICommandSender sender) 
+	public boolean canCommandSenderUseCommand(ICommandSender sender) 
 	{
 		return true;
 	}
 
-	public void execute(ICommandSender sender, String[] args) throws CommandException 
+	public void processCommand(ICommandSender sender, String[] args) throws CommandException 
 	{
 		if (args.length == 0)
 		{
@@ -176,7 +169,7 @@ public class CommandNoFall extends CommandBase
 	private void printAvoidWater(ICommandSender sender)
 	{
 		sender.addChatMessage(new ChatComponentTranslation(EnumChatFormatting.AQUA+""+EnumChatFormatting.BOLD+"[NoFall]"+EnumChatFormatting.RESET+""+EnumChatFormatting.AQUA+" Avoid water is " + (Config.avoidWater ? EnumChatFormatting.DARK_GREEN+""+EnumChatFormatting.BOLD+"enabled" : EnumChatFormatting.DARK_RED+""+EnumChatFormatting.BOLD+"disabled")));
-
+		
 	}
 
 	private void printAvoidLava(ICommandSender sender) 
@@ -197,7 +190,7 @@ public class CommandNoFall extends CommandBase
 		sender.addChatMessage(new ChatComponentTranslation(EnumChatFormatting.AQUA+""+EnumChatFormatting.BOLD+"[NoFall]"+EnumChatFormatting.RESET+""+EnumChatFormatting.AQUA+" Fall height is "+EnumChatFormatting.DARK_GREEN+""+EnumChatFormatting.BOLD+Config.airBlocks));		
 	}
 
-	public List getAliases() 
+	public List getCommandAliases() 
 	{
 		List aliases = new ArrayList();
 		aliases.add("nofall");
@@ -209,7 +202,7 @@ public class CommandNoFall extends CommandBase
 		return "";
 	}
 
-	public String getName() 
+	public String getCommandName() 
 	{
 		return "nofall";
 	}

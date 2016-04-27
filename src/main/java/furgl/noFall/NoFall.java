@@ -1,28 +1,25 @@
 package furgl.noFall;
 
-import furgl.noFall.config.Config;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 import furgl.noFall.packet.Handler;
 import furgl.noFall.packet.Message;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = NoFall.MODID, name = NoFall.MODNAME, version = NoFall.VERSION, guiFactory = "furgl.noFall.gui.NoFallGuiFactory")
 public class NoFall
@@ -38,15 +35,10 @@ public class NoFall
 	{
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(NoFall.MODID);
 		network.registerMessage(Handler.class, Message.class, 0, Side.CLIENT);
-		Config.init(event.getSuggestedConfigurationFile());
-		ClientCommandHandler.instance.registerCommand(new CommandNoFall());
-	}
-
-	@EventHandler
-	public void init(FMLInitializationEvent event)
-	{
 		MinecraftForge.EVENT_BUS.register(new NoFall());
 		FMLCommonHandler.instance().bus().register(new NoFall());
+		Config.init(event.getSuggestedConfigurationFile());
+		ClientCommandHandler.instance.registerCommand(new CommandNoFall());
 	}
 	
 	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
@@ -60,7 +52,7 @@ public class NoFall
 	{
 		NoFall.onServer = false; //reset onServer when connecting to new server
 	}
-
+	
 	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 	public void onEvent(TickEvent.PlayerTickEvent event)
 	{
@@ -68,57 +60,57 @@ public class NoFall
 		{
 			Config.useNoFall = false;
 		}
-		if (event.player.worldObj.isRemote && event.player.worldObj.getChunkFromBlockCoords(event.player.getPosition()).isLoaded() && Config.useNoFall && !event.player.isInWater() && !event.player.capabilities.isCreativeMode && !event.player.capabilities.allowFlying && (!event.player.isSneaking() || (event.player.isSneaking() && !event.player.onGround)) && isAboveAir(event))
+		if (event.player.worldObj.isRemote && event.player.worldObj.getChunkFromChunkCoords(event.player.chunkCoordX, event.player.chunkCoordZ).isChunkLoaded && Config.useNoFall && !event.player.isInWater() && !event.player.capabilities.isCreativeMode && !event.player.capabilities.allowFlying && (!event.player.isSneaking() || (event.player.isSneaking() && !event.player.onGround)) && isAboveAir(event))
 		{
 			Vec3 destination = null;
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(0, -1, 0);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(0, -1, 0);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(0, -2, 0);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(0, -2, 0);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(1, -1, 0);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(1, -1, 0);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(-1, -1, 0);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(-1, -1, 0);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(0, -1, 1);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(0, -1, 1);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(0, -1, -1);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(0, -1, -1);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(1, -1, 1);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(1, -1, 1);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(1, -1, -1);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(1, -1, -1);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(-1, -1, 1);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(-1, -1, 1);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
 			{
-				AxisAlignedBB box = event.player.getEntityBoundingBox().offset(-1, -1, -1);
+				AxisAlignedBB box = event.player.boundingBox.getOffsetBoundingBox(-1, -1, -1);
 				destination = findDestination(box, event);
 			}
 			if (destination == null)
@@ -128,7 +120,8 @@ public class NoFall
 			else
 			{
 				event.player.playSound("tile.piston.out", 0.1F, 1.5F);
-				Vec3 vec = destination.subtract(event.player.getPositionVector());
+				//orig Vec3 vec = destination.subtract(event.player.getPosition(1F));
+				Vec3 vec = event.player.getPosition(1F).subtract(destination);
 				vec.normalize();
 				double multiplier = 0.6D;
 				event.player.setVelocity(vec.xCoord*multiplier, event.player.motionY, vec.zCoord*multiplier);
@@ -139,23 +132,23 @@ public class NoFall
 	private Vec3 findDestination(AxisAlignedBB box, TickEvent.PlayerTickEvent event) 
 	{
 		//Check bounding box corners for non-air block
-		if (isSuitableBlock(new BlockPos(box.maxX, box.minY, box.maxZ), event))
-			return new Vec3(box.maxX, box.minY, box.maxZ);
-		else if (isSuitableBlock(new BlockPos(box.maxX, box.minY, box.minZ), event))
-			return new Vec3(box.maxX, box.minY, box.minZ);
-		else if (isSuitableBlock(new BlockPos(box.minX, box.minY, box.maxZ), event))
-			return new Vec3(box.minX, box.minY, box.maxZ);
-		else if (isSuitableBlock(new BlockPos(box.minX, box.minY, box.minZ), event))
-			return new Vec3(box.minX, box.minY, box.minZ);
+		if (isSuitableBlock(box.maxX, box.minY, box.maxZ, event))
+			return Vec3.createVectorHelper(box.maxX, box.minY, box.maxZ);
+		else if (isSuitableBlock(box.maxX, box.minY, box.minZ, event))
+			return Vec3.createVectorHelper(box.maxX, box.minY, box.minZ);
+		else if (isSuitableBlock(box.minX, box.minY, box.maxZ, event))
+			return Vec3.createVectorHelper(box.minX, box.minY, box.maxZ);
+		else if (isSuitableBlock(box.minX, box.minY, box.minZ, event))
+			return Vec3.createVectorHelper(box.minX, box.minY, box.minZ);
 		else
 			return null;
 	}
 
 	private boolean isAboveAir(TickEvent.PlayerTickEvent event) 
 	{
-		for (int i=0; i<=Config.airBlocks+1; i++)
+		for (int i=0; i<=Config.airBlocks+1 ; i++)
 		{
-			Block block = event.player.worldObj.getBlockState(new BlockPos(event.player.getPositionVector()).add(0D, -i, 0D)).getBlock();
+			Block block = event.player.worldObj.getBlock((int)Math.floor(event.player.posX), (int)Math.floor(event.player.posY-i),(int)Math.floor(event.player.posZ));
 			if ((block.equals(Blocks.water) && Config.avoidWater) || (block.equals(Blocks.lava) && Config.avoidLava))
 				return true;
 			if (!block.equals(Blocks.air))
@@ -163,11 +156,14 @@ public class NoFall
 		}
 		return true;
 	}
-
-	private boolean isSuitableBlock(BlockPos pos, TickEvent.PlayerTickEvent event)
+	
+	private boolean isSuitableBlock(double dx, double dy, double dz, TickEvent.PlayerTickEvent event)
 	{
-		Block state = event.player.worldObj.getBlockState(pos).getBlock();
-		Block stateUp = event.player.worldObj.getBlockState(pos.up()).getBlock();
+		int x = (int) Math.floor(dx);
+		int y = (int) Math.floor(dy);
+		int z = (int) Math.floor(dz);
+		Block state = event.player.worldObj.getBlock(x, y, z);
+		Block stateUp = event.player.worldObj.getBlock(x, y+1, z);
 		if ((state.equals(Blocks.water) && Config.avoidWater) || (state.equals(Blocks.lava) && Config.avoidLava))
 			return false;
 		if (!state.equals(Blocks.air) && stateUp.equals(Blocks.air))
