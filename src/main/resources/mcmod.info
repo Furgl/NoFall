@@ -1,0 +1,17 @@
+[
+{
+  "modid": "nofall",
+  "name": "No Fall",
+  "description": "No Fall prevents you from falling a specified distance. With this mod, you can run around the top of a mountain, far above ground, or explore the End without worry about falling to your death. No Fall can also be set to prevent you from falling into lava or water. Settings can be changed using commands. This mod is clientside and can be used on servers that do not have the mod installed.",
+  "version": "1.0",
+  "mcversion": "1.8",
+  "url": "https://sites.google.com/site/furglsmods/no-fall",
+  "updateUrl": "",
+  "authorList": ["Furgl"],
+  "credits": "2piradians - Testing",
+  "logoFile": "/nofall.png",
+  "screenshots": [],
+  "requiredMods": ["Forge"],
+  "dependencies": []
+}
+]
