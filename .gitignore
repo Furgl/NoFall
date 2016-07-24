@@ -1,10 +1,10 @@
 # eclipse
-bin
 *.launch
-.settings
-.metadata
-.classpath
-.project
+/.settings
+/.metadata
+/.classpath
+/.project
+/eclipse
 
 # idea
 out
@@ -18,14 +18,9 @@ build
 .gradle
 
 # other
-eclipse
-run
-saves
-screenshots
+/bin
 logs
-config
 crash-reports
-world
 whitelist.json
 usercache.json
 usernamecache.json
@@ -40,4 +35,3 @@ forge-*changelog.txt
 LICENSE-fml.txt
 MinecraftForge-*.txt
 README.txt
-server-resource*
