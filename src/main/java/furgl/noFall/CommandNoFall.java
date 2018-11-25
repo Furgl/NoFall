@@ -5,14 +5,14 @@ import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import furgl.noFall.config.Config;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 
 public class CommandNoFall extends CommandBase
 {
@@ -26,7 +26,7 @@ public class CommandNoFall extends CommandBase
 		return 0;
 	}
 
-	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) 
+	public List<java.lang.String> getTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) 
 	{
 		if (args.length == 1)
 		{
@@ -35,7 +35,7 @@ public class CommandNoFall extends CommandBase
 			list.add("disable");
 			list.add("height");
 			list.add("avoid");
-			return func_175762_a(args, list);
+			return list;
 		}
 		else if (args.length == 2)
 		{
@@ -44,7 +44,7 @@ public class CommandNoFall extends CommandBase
 				List list = new ArrayList();
 				list.add("lava");
 				list.add("water");
-				return func_175762_a(args, list);
+				return list;
 			}
 		}
 		else if (args.length == 3)
@@ -54,7 +54,7 @@ public class CommandNoFall extends CommandBase
 				List list = new ArrayList();
 				list.add("true");
 				list.add("false");
-				return func_175762_a(args, list);
+				return list;
 			}
 		}
 		return null;
@@ -65,7 +65,7 @@ public class CommandNoFall extends CommandBase
 		return true;
 	}
 
-	public void execute(ICommandSender sender, String[] args) throws CommandException 
+	public void execute(MinecraftServer server,ICommandSender sender, String[] args) throws CommandException 
 	{
 		if (args.length == 0)
 		{
@@ -78,18 +78,18 @@ public class CommandNoFall extends CommandBase
 		{
 			if (args[0].equalsIgnoreCase("enable"))
 			{
-				Config.useNoFall = true;
+				Configs.useNoFall = true;
 				printUseNoFall(sender);
 			}
 			else if (args[0].equalsIgnoreCase("disable"))
 			{
-				Config.useNoFall = false;
+				Configs.useNoFall = false;
 				printUseNoFall(sender);
 			}
 			else if (args[0].equalsIgnoreCase("height"))
 				printFallHeight(sender);
 			else if (args[0].equalsIgnoreCase("avoid"))
-				sender.addChatMessage(new ChatComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+				sender.sendMessage(new TextComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]"));
 			else
 				printUsage(sender);
 		}
@@ -99,15 +99,15 @@ public class CommandNoFall extends CommandBase
 			{
 				if (NumberUtils.isNumber(args[1]))
 				{
-					Config.airBlocks = Integer.parseInt(args[1]);
-					if (Config.airBlocks > 255)
-						Config.airBlocks = 255;
-					else if (Config.airBlocks < 2)
-						Config.airBlocks = 2;
+					Configs.airBlocks = Integer.parseInt(args[1]);
+					if (Configs.airBlocks > 255)
+						Configs.airBlocks = 255;
+					else if (Configs.airBlocks < 2)
+						Configs.airBlocks = 2;
 					printFallHeight(sender);
 				}
 				else
-					sender.addChatMessage(new ChatComponentTranslation("Usage: /nofall height [<2-255>]").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+					sender.sendMessage(new TextComponentTranslation("Usage: /nofall height [<2-255>]").setStyle(new Style().setColor(TextFormatting.RED)));
 			}
 			else if (args[0].equalsIgnoreCase("avoid"))
 			{
@@ -116,7 +116,7 @@ public class CommandNoFall extends CommandBase
 				else if (args[1].equalsIgnoreCase("water"))
 					printAvoidWater(sender);
 				else
-					sender.addChatMessage(new ChatComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+					sender.sendMessage(new TextComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setStyle(new Style().setColor(TextFormatting.RED)));
 			}
 			else
 				printUsage(sender);
@@ -130,71 +130,71 @@ public class CommandNoFall extends CommandBase
 				{
 					if (args[2].equalsIgnoreCase("true"))
 					{
-						Config.avoidLava = true;
+						Configs.avoidLava = true;
 						printAvoidLava(sender);
 					}
 					else if (args[2].equalsIgnoreCase("false"))
 					{
-						Config.avoidLava = false;
+						Configs.avoidLava = false;
 						printAvoidLava(sender);
 					}
 					else
-						sender.addChatMessage(new ChatComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+						sender.sendMessage(new TextComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setStyle(new Style().setColor(TextFormatting.RED)));
 				}
 				else if (args[1].equalsIgnoreCase("water"))
 				{
 					if (args[2].equalsIgnoreCase("true"))
 					{
-						Config.avoidWater = true;
+						Configs.avoidWater = true;
 						printAvoidWater(sender);
 					}
 					else if (args[2].equalsIgnoreCase("false"))
 					{
-						Config.avoidWater = false;
+						Configs.avoidWater = false;
 						printAvoidWater(sender);
 					}
 					else
-						sender.addChatMessage(new ChatComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+						sender.sendMessage(new TextComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setStyle(new Style().setColor(TextFormatting.RED)));
 				}
 				else
-					sender.addChatMessage(new ChatComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+					sender.sendMessage(new TextComponentTranslation("Usage: /nofall avoid <lava/water> [<true/false>]").setStyle(new Style().setColor(TextFormatting.RED)));
 			}
 			else
 				printUsage(sender);
 		}
 		else
 			printUsage(sender);
-		Config.syncToConfig();
+
 		return;
 	}
 
 	private void printUsage(ICommandSender sender) 
 	{
-		sender.addChatMessage(new ChatComponentTranslation("Usage: /nofall [enable/disable/avoid/height] [...] ").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+		sender.sendMessage(new TextComponentTranslation("Usage: /nofall [enable/disable/avoid/height] [...] ").setStyle(new Style().setColor(TextFormatting.RED)));
 	}
 
 	private void printAvoidWater(ICommandSender sender)
 	{
-		sender.addChatMessage(new ChatComponentTranslation(EnumChatFormatting.AQUA+""+EnumChatFormatting.BOLD+"[NoFall]"+EnumChatFormatting.RESET+""+EnumChatFormatting.AQUA+" Avoid water is " + (Config.avoidWater ? EnumChatFormatting.DARK_GREEN+""+EnumChatFormatting.BOLD+"enabled" : EnumChatFormatting.DARK_RED+""+EnumChatFormatting.BOLD+"disabled")));
+		sender.sendMessage(new TextComponentTranslation(TextFormatting.AQUA+""+TextFormatting.BOLD+"[NoFall]"+TextFormatting.RESET+""+TextFormatting.AQUA+" Avoid water is " + (Configs.avoidWater ? TextFormatting.DARK_GREEN+""+TextFormatting.BOLD+"enabled" : TextFormatting.DARK_RED+""+TextFormatting.BOLD+"disabled")));
 
 	}
 
 	private void printAvoidLava(ICommandSender sender) 
 	{	
-		sender.addChatMessage(new ChatComponentTranslation(EnumChatFormatting.AQUA+""+EnumChatFormatting.BOLD+"[NoFall]"+EnumChatFormatting.RESET+""+EnumChatFormatting.AQUA+" Avoid lava is " + (Config.avoidLava ? EnumChatFormatting.DARK_GREEN+""+EnumChatFormatting.BOLD+"enabled" : EnumChatFormatting.DARK_RED+""+EnumChatFormatting.BOLD+"disabled")));
+		sender.sendMessage(new TextComponentTranslation(TextFormatting.AQUA+""+TextFormatting.BOLD+"[NoFall]"+TextFormatting.RESET+""+TextFormatting.AQUA+" Avoid lava is " + (Configs.avoidLava ? TextFormatting.DARK_GREEN+""+TextFormatting.BOLD+"enabled" : TextFormatting.DARK_RED+""+TextFormatting.BOLD+"disabled")));
 	}
 
 	private void printUseNoFall(ICommandSender sender) 
 	{
 		if (NoFall.onServer)
-			sender.addChatMessage(new ChatComponentTranslation(EnumChatFormatting.AQUA+""+EnumChatFormatting.BOLD+"[NoFall]"+EnumChatFormatting.RESET+""+EnumChatFormatting.AQUA+" No Fall is " + (Config.useNoFall ? EnumChatFormatting.DARK_GREEN+""+EnumChatFormatting.BOLD+"enabled" : EnumChatFormatting.DARK_RED+""+EnumChatFormatting.BOLD+"disabled")));
+			sender.sendMessage(new TextComponentTranslation(TextFormatting.AQUA+""+TextFormatting.BOLD+"[NoFall]"+TextFormatting.RESET+""+TextFormatting.AQUA+" No Fall is " + (Configs.useNoFall ? TextFormatting.DARK_GREEN+""+TextFormatting.BOLD+"enabled" : TextFormatting.DARK_RED+""+TextFormatting.BOLD+"disabled")));
 		else
-			sender.addChatMessage(new ChatComponentTranslation("[NoFall] No Fall cannot be enabled when not installed on the server.").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.DARK_RED)));
+			sender.sendMessage(new TextComponentTranslation("[NoFall] No Fall cannot be enabled when not installed on the server.").setStyle(new Style().setColor(TextFormatting.DARK_RED)));
 	}
 
 	private void printFallHeight(ICommandSender sender) 
 	{
-		sender.addChatMessage(new ChatComponentTranslation(EnumChatFormatting.AQUA+""+EnumChatFormatting.BOLD+"[NoFall]"+EnumChatFormatting.RESET+""+EnumChatFormatting.AQUA+" Fall height is "+EnumChatFormatting.DARK_GREEN+""+EnumChatFormatting.BOLD+Config.airBlocks));		
+		sender.sendMessage(new TextComponentTranslation(TextFormatting.AQUA+""+TextFormatting.BOLD+"[NoFall]"+TextFormatting.RESET+""+TextFormatting.AQUA+" Fall height is "+TextFormatting.DARK_GREEN+""+TextFormatting.BOLD+Configs.airBlocks));		
 	}
 
 	public List getAliases() 
@@ -204,7 +204,7 @@ public class CommandNoFall extends CommandBase
 		return aliases;
 	}
 
-	public String getCommandUsage(ICommandSender sender) 
+	public String getUsage(ICommandSender sender) 
 	{
 		return "";
 	}
@@ -212,5 +212,6 @@ public class CommandNoFall extends CommandBase
 	public String getName() 
 	{
 		return "nofall";
-	}
+	}  
+        
 }
